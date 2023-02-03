@@ -106,12 +106,16 @@ EOF
 
 RUNDASHBOARD=y
 
-read -p "Set the password to access the Dashboard: " -s DASHPASS
+read -p "Set the password to access the Dashboard/Введите желаемый пароль для доступа к Dashboard " -s DASHPASS
 echo
+
+echo -e "${fmt}\nSet port for node/Устанавливаем порт для ноды{end}" && sleep 1
 
 wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
 source ports_cheker.sh
 DASHPORT=$USEPORT
+
+echo -e "${fmt}\nNode port/Порт ноды - $DASHPORT${end}" && sleep 1
 
 echo "Your dashboard link - https://$(wget -qO- eth0.me):$DASHPORT" >> shardeum_dashboard_link.txt
 
