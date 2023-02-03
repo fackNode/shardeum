@@ -104,7 +104,7 @@ RUNDASHBOARD=y
 read -p "Set the password to access the Dashboard: " -s DASHPASS
 echo
 
-wget https://github.com/fackNode/shardeum/blob/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
+wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
 source ports_cheker.sh
 DASHPORT=$USEPORT
 
