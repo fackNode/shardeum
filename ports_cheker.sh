@@ -18,6 +18,6 @@ while true; do
   fi
 done
 
-DASHPORT=$port
+USEPORT=$port
 
-export DASHPORT
+export USEPORT
