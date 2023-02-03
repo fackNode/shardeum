@@ -209,7 +209,7 @@ EOF
 
 if docker ps -a | grep -q 'test-dashboard'; then
               echo -e "${fmt}\nNode installed correctly / Нода установлена корректно${end}" && sleep 1
-	      cat shardeum_dashboard_link.txt
+	      cat /root/shardeum_dashboard_link.txt
 else
               echo -e "${err}\nNode installed incorrectly / Нода установлена некорректно${end}" && sleep 1
 fi
