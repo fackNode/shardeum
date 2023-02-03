@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+#docker and docker-compose installation
+sudo wget https://raw.githubusercontent.com/fackNode/requirements/main/docker.sh && chmod +x docker.sh && ./docker.sh
+
 set -e
 
 # Check all things that will be needed for this script to succeed like access to docker and docker-compose
@@ -95,26 +99,31 @@ cat << EOF
 
 EOF
 
-read -p "Do you want to run the web based Dashboard? (y/n): " RUNDASHBOARD
-RUNDASHBOARD=${RUNDASHBOARD:-y}
+RUNDASHBOARD=y
 
 read -p "Set the password to access the Dashboard: " -s DASHPASS
 echo
 
-while :; do
-  read -p "Enter the port (1025-65536) to access the web based Dashboard (default 8080): " DASHPORT
-  DASHPORT=${DASHPORT:-8080}
-  [[ $DASHPORT =~ ^[0-9]+$ ]] || { echo "Enter a valid port"; continue; }
-  if ((DASHPORT >= 1025 && DASHPORT <= 65536)); then
-    DASHPORT=${DASHPORT:-8080}
-    break
-  else
-    echo "Port out of range, try again"
-  fi
-done
+wget https://github.com/fackNode/shardeum/blob/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
+source ports_cheker.sh
+DASHPORT=$USEPORT
 
-read -p "What base directory should the node use (defaults to ~/.shardeum): " NODEHOME
-NODEHOME=${NODEHOME:-~/.shardeum}
+# while :; do
+#   read -p "Enter the port (1025-65536) to access the web based Dashboard (default 8080): " DASHPORT
+#   DASHPORT=${DASHPORT:-8080}
+#   [[ $DASHPORT =~ ^[0-9]+$ ]] || { echo "Enter a valid port"; continue; }
+#   if ((DASHPORT >= 1025 && DASHPORT <= 65536)); then
+#     DASHPORT=${DASHPORT:-8080}
+#     break
+#   else
+#     echo "Port out of range, try again"
+#   fi
+# done
+
+# read -p "What base directory should the node use (defaults to ~/.shardeum): " NODEHOME
+# NODEHOME=${NODEHOME:-~/.shardeum}
+
+NODEHOME=${/root:-~/.shardeum}
 
 # PS3='Select a network to connect to: '
 # options=("betanet")
@@ -211,3 +220,4 @@ To use the Command Line Interface:
 	3. Run "operator-cli --help" for commands
 
 EOF
+
