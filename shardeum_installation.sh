@@ -104,11 +104,6 @@ RUNDASHBOARD=y
 read -p "Set the password to access the Dashboard: " -s DASHPASS
 echo
 
-# wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
-# source ports_cheker.sh
-# DASHPORT=$USEPORT
-# export DASHPORT
-
 while :; do
   read -p "Enter the port (1025-65536) to access the web based Dashboard (default 8080): " DASHPORT
   DASHPORT=${DASHPORT:-8080}
@@ -120,9 +115,6 @@ while :; do
     echo "Port out of range, try again"
   fi
 done
-
-# read -p "What base directory should the node use (defaults to ~/.shardeum): " NODEHOME
-# NODEHOME=${NODEHOME:-~/.shardeum}
 
 NODEHOME=/root/.shardeum
 
@@ -204,7 +196,7 @@ if [ $RUNDASHBOARD = "y" ]
 then
 cat <<EOF
   To use the Web Dashboard:
-    1. Open a web browser and navigate to the web dashboard at https://localhost:$DASHPORT
+    1. Open a web browser and navigate to the web dashboard at "https://$(wget -qO- eth0.me):$DASHPORT"
     2. Go to the Settings tab and connect a wallet.
     3. Go to the Maintenance tab and click the Start Node button.
   
@@ -221,4 +213,3 @@ To use the Command Line Interface:
 	3. Run "operator-cli --help" for commands
 
 EOF
-
