@@ -104,22 +104,22 @@ RUNDASHBOARD=y
 read -p "Set the password to access the Dashboard: " -s DASHPASS
 echo
 
-wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
-source ports_cheker.sh
-DASHPORT=$USEPORT
-export DASHPORT
+# wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
+# source ports_cheker.sh
+# DASHPORT=$USEPORT
+# export DASHPORT
 
-# while :; do
-#   read -p "Enter the port (1025-65536) to access the web based Dashboard (default 8080): " DASHPORT
-#   DASHPORT=${DASHPORT:-8080}
-#   [[ $DASHPORT =~ ^[0-9]+$ ]] || { echo "Enter a valid port"; continue; }
-#   if ((DASHPORT >= 1025 && DASHPORT <= 65536)); then
-#     DASHPORT=${DASHPORT:-8080}
-#     break
-#   else
-#     echo "Port out of range, try again"
-#   fi
-# done
+while :; do
+  read -p "Enter the port (1025-65536) to access the web based Dashboard (default 8080): " DASHPORT
+  DASHPORT=${DASHPORT:-8080}
+  [[ $DASHPORT =~ ^[0-9]+$ ]] || { echo "Enter a valid port"; continue; }
+  if ((DASHPORT >= 1025 && DASHPORT <= 65536)); then
+    DASHPORT=${DASHPORT:-8080}
+    break
+  else
+    echo "Port out of range, try again"
+  fi
+done
 
 # read -p "What base directory should the node use (defaults to ~/.shardeum): " NODEHOME
 # NODEHOME=${NODEHOME:-~/.shardeum}
