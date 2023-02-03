@@ -92,11 +92,9 @@ else
 fi
 
 cat << EOF
-
 #########################
 # 0. GET INFO FROM USER #
 #########################
-
 EOF
 
 RUNDASHBOARD=y
@@ -104,17 +102,11 @@ RUNDASHBOARD=y
 read -p "Set the password to access the Dashboard: " -s DASHPASS
 echo
 
-while :; do
-  read -p "Enter the port (1025-65536) to access the web based Dashboard (default 8080): " DASHPORT
-  DASHPORT=${DASHPORT:-8080}
-  [[ $DASHPORT =~ ^[0-9]+$ ]] || { echo "Enter a valid port"; continue; }
-  if ((DASHPORT >= 1025 && DASHPORT <= 65536)); then
-    DASHPORT=${DASHPORT:-8080}
-    break
-  else
-    echo "Port out of range, try again"
-  fi
-done
+wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
+source ports_cheker.sh
+DASHPORT=$USEPORT
+
+echo "Your dashboard link - https://$(wget -qO- eth0.me):$DASHPORT" >> shardeum_dashboard_link.txt
 
 NODEHOME=/root/.shardeum
 
@@ -136,11 +128,9 @@ APPSEEDLIST="18.196.23.139"
 APPMONITOR="54.93.204.116"
 
 cat <<EOF
-
 ###########################
 # 1. Pull Compose Project #
 ###########################
-
 EOF
 
 git clone https://gitlab.com/shardeum/validator/dashboard.git ${NODEHOME} &&
@@ -148,22 +138,18 @@ git clone https://gitlab.com/shardeum/validator/dashboard.git ${NODEHOME} &&
   chmod a+x ./*.sh
 
 cat <<EOF
-
 #########################
 # 2. Building base image #
 #########################
-
 EOF
 
 cd ${NODEHOME} &&
 docker-safe build --no-cache -t test-dashboard -f Dockerfile --build-arg RUNDASHBOARD=${RUNDASHBOARD} .
 
 cat <<EOF
-
 ###############################
 # 3. Create and Set .env File #
 ###############################
-
 EOF
 
 cd ${NODEHOME} &&
@@ -176,11 +162,9 @@ DASHPASS=${DASHPASS}
 EOL
 
 cat <<EOF
-
 ############################
 # 4. Start Compose Project #
 ############################
-
 EOF
 
 cd ${NODEHOME} &&
@@ -206,10 +190,8 @@ EOF
 fi
 
 cat <<EOF
-
 To use the Command Line Interface:
 	1. Navigate to the Shardeum home directory ($NODEHOME).
 	2. Enter the validator container with ./shell.sh.
 	3. Run "operator-cli --help" for commands
-
 EOF
