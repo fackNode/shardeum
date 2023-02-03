@@ -107,6 +107,7 @@ echo
 wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
 source ports_cheker.sh
 DASHPORT=$USEPORT
+export DASHPORT
 
 # while :; do
 #   read -p "Enter the port (1025-65536) to access the web based Dashboard (default 8080): " DASHPORT
@@ -123,7 +124,7 @@ DASHPORT=$USEPORT
 # read -p "What base directory should the node use (defaults to ~/.shardeum): " NODEHOME
 # NODEHOME=${NODEHOME:-~/.shardeum}
 
-NODEHOME=${/root:-~/.shardeum}
+NODEHOME=/root/.shardeum
 
 # PS3='Select a network to connect to: '
 # options=("betanet")
