@@ -99,9 +99,11 @@ else
 fi
 
 cat << EOF
+
 #########################
 # 0. GET INFO FROM USER #
 #########################
+
 EOF
 
 RUNDASHBOARD=y
@@ -142,6 +144,7 @@ cat <<EOF
 ###########################
 # 1. Pull Compose Project #
 ###########################
+
 EOF
 
 git clone https://gitlab.com/shardeum/validator/dashboard.git ${NODEHOME} &&
@@ -158,10 +161,14 @@ cd ${NODEHOME} &&
 docker-safe build --no-cache -t test-dashboard -f Dockerfile --build-arg RUNDASHBOARD=${RUNDASHBOARD} .
 
 cat <<EOF
+
 ###############################
 # 3. Create and Set .env File #
 ###############################
+
 EOF
+
+SERVERIP=$(get_external_ip)
 
 cd ${NODEHOME} &&
 touch ./.env
@@ -170,9 +177,12 @@ APP_IP=auto
 APP_SEEDLIST=${APPSEEDLIST}
 APP_MONITOR=${APPMONITOR}
 DASHPASS=${DASHPASS}
+DASHPORT=${DASHPORT}
+SERVERIP=${SERVERIP}
 EOL
 
 cat <<EOF
+
 ############################
 # 4. Start Compose Project #
 ############################
@@ -208,8 +218,8 @@ To use the Command Line Interface:
 EOF
 
 if docker ps -a | grep -q 'test-dashboard'; then
-              echo -e "${fmt}\nNode installed correctly / Нода установлена корректно${end}" && sleep 1
-	      cat /root/shardeum_dashboard_link.txt
+  echo -e "${fmt}\nNode installed correctly / Нода установлена корректно${end}" && sleep 1
+  cat /root/shardeum_dashboard_link.txt
 else
-              echo -e "${err}\nNode installed incorrectly / Нода установлена некорректно${end}" && sleep 1
+  echo -e "${err}\nNode installed incorrectly / Нода установлена некорректно${end}" && sleep 1
 fi
