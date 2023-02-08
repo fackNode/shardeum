@@ -9,6 +9,7 @@ scss="\e[32m"
 
 #docker and docker-compose installation
 sudo wget https://raw.githubusercontent.com/fackNode/requirements/main/docker.sh && chmod +x docker.sh && ./docker.sh
+sudo apt install git -y
 
 set -e
 
