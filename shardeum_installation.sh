@@ -283,7 +283,7 @@ if [ $RUNDASHBOARD = "y" ]
 then
 cat <<EOF
   To use the Web Dashboard:
-    1. Open a web browser and navigate to the web dashboard at https://localhost:$DASHPORT
+    1. Open a web browser and navigate to the web dashboard at "https://$(wget -qO- eth0.me):$DASHPORT"
     2. Go to the Settings tab and connect a wallet.
     3. Go to the Maintenance tab and click the Start Node button.
 
@@ -300,3 +300,10 @@ To use the Command Line Interface:
 	3. Run "operator-cli --help" for commands
 
 EOF
+
+if docker ps -a | grep -q 'test-dashboard'; then
+  echo -e "${fmt}\nNode installed correctly / Нода установлена корректно${end}" && sleep 1
+  cat /root/shardeum_dashboard_link.txt
+else
+  echo -e "${err}\nNode installed incorrectly / Нода установлена некорректно${end}" && sleep 1
+fi
