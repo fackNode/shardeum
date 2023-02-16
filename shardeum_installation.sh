@@ -167,6 +167,14 @@ source HMEXT_SHMINT_ports_checker.sh
 SHMEXT=$HMX
 SHMINT=$SHN
 
+cat <<EOF
+
+SHMEXT prort - $SHMEXT
+SHMINT port - $SHMINT
+
+EOF
+sleep 1
+
 NODEHOME=/root/.shardeum
 
 # PS3='Select a network to connect to: '
