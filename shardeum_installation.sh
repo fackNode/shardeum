@@ -169,7 +169,7 @@ SHMINT=$SHN
 
 cat <<EOF
 
-SHMEXT prort - $SHMEXT
+SHMEXT port - $SHMEXT
 SHMINT port - $SHMINT
 
 EOF
