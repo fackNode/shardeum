@@ -71,11 +71,14 @@ docker-compose-safe() {
 get_ip() {
   local ip
   if command -v ip >/dev/null; then
-    ip=$(ip addr show $(ip route | awk '/default/ {print $5}') | awk '/inet/ {print $2}' | cut -d/ -f1)
-  elif command -v ifconfig >/dev/null; then
-    ip=$(ifconfig | awk '/inet addr/{print substr($2,6)}')
+    ip=$(ip addr show $(ip route | awk '/default/ {print $5}') | awk '/inet/ {print $2}' | cut -d/ -f1 | head -n1)
+  elif command -v netstat >/dev/null; then
+    # Get the default route interface
+    interface=$(netstat -rn | awk '/default/{print $4}' | head -n1)
+    # Get the IP address for the default interface
+    ip=$(ifconfig "$interface" | awk '/inet /{print $2}')
   else
-    echo "Error: neither 'ip' nor 'ifconfig' command found"
+    echo "Error: neither 'ip' nor 'ifconfig' command found. Submit a bug for your OS."
     return 1
   fi
   echo $ip
@@ -92,6 +95,9 @@ get_external_ip() {
   fi
   if [[ -z "$external_ip" ]]; then
     external_ip=$(curl -s https://icanhazip.com/)
+  fi
+    if [[ -z "$external_ip" ]]; then
+    external_ip=$(curl --header  "Host: icanhazip.com" -s 104.18.114.97)
   fi
   if [[ -z "$external_ip" ]]; then
     external_ip=$(get_ip)
@@ -203,8 +209,12 @@ cat <<EOF
 EOF
 
 if [ -d "$NODEHOME" ]; then
-  echo "Removing existing directory $NODEHOME..."
-  rm -rf "$NODEHOME"
+  if [ "$NODEHOME" != "$(pwd)" ]; then
+    echo "Removing existing directory $NODEHOME..."
+    rm -rf "$NODEHOME"
+  else
+    echo "Cannot delete current working directory. Please move to another directory and try again."
+  fi
 fi
 
 git clone https://gitlab.com/shardeum/validator/dashboard.git ${NODEHOME} &&
@@ -220,7 +230,7 @@ cat <<EOF
 EOF
 
 SERVERIP=$(get_external_ip)
-
+LOCALLANIP=$(get_ip)
 cd ${NODEHOME} &&
 touch ./.env
 cat >./.env <<EOL
@@ -230,6 +240,7 @@ APP_MONITOR=${APPMONITOR}
 DASHPASS=${DASHPASS}
 DASHPORT=${DASHPORT}
 SERVERIP=${SERVERIP}
+LOCALLANIP=${LOCALLANIP}
 SHMEXT=${SHMEXT}
 SHMINT=${SHMINT}
 EOL
@@ -265,11 +276,11 @@ EOF
 
 cd ${NODEHOME}
 if [[ "$(uname)" == "Darwin" ]]; then
-  sed -i '' "s/- '8080:8080'/- '$DASHPORT:$DASHPORT'/" docker-compose.yml
+  sed "s/- '8080:8080'/- '$DASHPORT:$DASHPORT'/" docker-compose.tmpl > docker-compose.yml
   sed -i '' "s/- '9001-9010:9001-9010'/- '$SHMEXT:$SHMEXT'/" docker-compose.yml
   sed -i '' "s/- '10001-10010:10001-10010'/- '$SHMINT:$SHMINT'/" docker-compose.yml
 else
-  sed -i "s/- '8080:8080'/- '$DASHPORT:$DASHPORT'/" docker-compose.yml
+  sed "s/- '8080:8080'/- '$DASHPORT:$DASHPORT'/" docker-compose.tmpl > docker-compose.yml
   sed -i "s/- '9001-9010:9001-9010'/- '$SHMEXT:$SHMEXT'/" docker-compose.yml
   sed -i "s/- '10001-10010:10001-10010'/- '$SHMINT:$SHMINT'/" docker-compose.yml
 fi
