@@ -312,7 +312,7 @@ To use the Command Line Interface:
 
 EOF
 
-if docker ps -a | grep -q 'test-dashboard'; then
+if docker ps -a | grep -q 'local-dashboard'; then
   echo -e "${fmt}\nNode installed correctly / Нода установлена корректно${end}" && sleep 1
   cat /root/shardeum_dashboard_link.txt
 else
