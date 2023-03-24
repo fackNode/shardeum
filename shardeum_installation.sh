@@ -336,3 +336,7 @@ if docker ps -a | grep -q 'local-dashboard'; then
 else
   echo -e "${err}\nNode installed incorrectly / Нода установлена некорректно${end}" && sleep 1
 fi
+
+rm $HOME/ports_cheker.sh
+rm $HOME/HMEXT_SHMINT_ports_checker.sh
+rm $HOME/docker.sh
