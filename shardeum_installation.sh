@@ -38,6 +38,7 @@ else
   exit 1
 fi
 
+
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 docker-safe() {
@@ -118,7 +119,6 @@ else
 fi
 
 cat << EOF
-
 #########################
 # 0. GET INFO FROM USER #
 #########################
@@ -127,16 +127,39 @@ EOF
 
 RUNDASHBOARD=y
 
-while true; do
-  read -p "Set the password to access the Dashboard/Введите желаемый пароль для доступа к Dashboard: " -s input
-  echo
-  if [[ -n "$input" ]] && [[ ! "$input" =~ \  ]]; then
-    DASHPASS=$input
-    break
+unset CHARCOUNT
+echo -n "Set the password to access the Dashboard: "
+CHARCOUNT=0
+while IFS= read -p "$PROMPT" -r -s -n 1 CHAR
+do
+  # Enter - accept password
+  if [[ $CHAR == $'\0' ]] ; then
+    if [ $CHARCOUNT -gt 0 ] ; then # Make sure password character length is greater than 0.
+      break
+    else
+      echo
+      echo -n "Invalid password input. Enter a password with character length greater than 0:"
+      continue
+    fi
+  fi
+  # Backspace
+  if [[ $CHAR == $'\177' ]] ; then
+    if [ $CHARCOUNT -gt 0 ] ; then
+      CHARCOUNT=$((CHARCOUNT-1))
+      PROMPT=$'\b \b'
+      DASHPASS="${DASHPASS%?}"
+    else
+      PROMPT=''
+    fi
   else
-    echo "Invalid input, try again./Неправильный ввод, попробуйте снова."
+    CHARCOUNT=$((CHARCOUNT+1))
+    PROMPT='*'
+    DASHPASS+="$CHAR"
   fi
 done
+
+echo # New line after inputs.
+# echo "Password saved as:" $DASHPASS #DEBUG: TEST PASSWORD WAS RECORDED AFTER ENTERED.
 
 echo -e "${fmt}\nSet port for node/Устанавливаем порт для ноды${end}" && sleep 1
 
@@ -174,10 +197,8 @@ SHMEXT=$HMX
 SHMINT=$SHN
 
 cat <<EOF
-
 SHMEXT port - $SHMEXT
 SHMINT port - $SHMINT
-
 EOF
 sleep 1
 
@@ -235,7 +256,7 @@ cd ${NODEHOME} &&
 touch ./.env
 cat >./.env <<EOL
 APP_IP=auto
-APP_SEEDLIST=${APPSEEDLIST}
+EXISTING_ARCHIVERS=[{"ip":"18.194.3.6","port":4000,"publicKey":"758b1c119412298802cd28dbfa394cdfeecc4074492d60844cc192d632d84de3"},{"ip":"139.144.19.178","port":4000,"publicKey":"840e7b59a95d3c5f5044f4bc62ab9fa94bc107d391001141410983502e3cde63"},{"ip":"139.144.43.47","port":4000,"publicKey":"7af699dd711074eb96a8d1103e32b589e511613ebb0c6a789a9e8791b2b05f34"},{"ip":"72.14.178.106","port":4000,"publicKey":"2db7c949632d26b87d7e7a5a4ad41c306f63ee972655121a37c5e4f52b00a542"}]
 APP_MONITOR=${APPMONITOR}
 DASHPASS=${DASHPASS}
 DASHPORT=${DASHPORT}
@@ -264,7 +285,7 @@ cat <<EOF
 EOF
 
 cd ${NODEHOME} &&
-docker-safe build --no-cache -t test-dashboard -f Dockerfile --build-arg RUNDASHBOARD=${RUNDASHBOARD} .
+docker-safe build --no-cache -t local-dashboard -f Dockerfile --build-arg RUNDASHBOARD=${RUNDASHBOARD} .
 
 cat <<EOF
 
@@ -297,19 +318,16 @@ cat <<EOF
     1. Open a web browser and navigate to the web dashboard at "https://$(wget -qO- eth0.me):$DASHPORT"
     2. Go to the Settings tab and connect a wallet.
     3. Go to the Maintenance tab and click the Start Node button.
-
   If this validator is on the cloud and you need to reach the dashboard over the internet,
   please set a strong password and use the external IP instead of localhost.
 EOF
 fi
 
 cat <<EOF
-
 To use the Command Line Interface:
 	1. Navigate to the Shardeum home directory ($NODEHOME).
 	2. Enter the validator container with ./shell.sh.
 	3. Run "operator-cli --help" for commands
-
 EOF
 
 if docker ps -a | grep -q 'local-dashboard'; then
