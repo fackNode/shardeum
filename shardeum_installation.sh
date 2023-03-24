@@ -337,6 +337,7 @@ else
   echo -e "${err}\nNode installed incorrectly / Нода установлена некорректно${end}" && sleep 1
 fi
 
+#delete scripts
 rm $HOME/ports_cheker.sh
 rm $HOME/HMEXT_SHMINT_ports_checker.sh
 rm $HOME/docker.sh
