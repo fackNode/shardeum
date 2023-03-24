@@ -163,8 +163,8 @@ echo # New line after inputs.
 
 echo -e "${fmt}\nSet port for node/Устанавливаем порт для ноды${end}" && sleep 1
 
-wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_cheker.sh && chmod +x ports_cheker.sh && ./ports_cheker.sh
-source ports_cheker.sh
+wget https://raw.githubusercontent.com/fackNode/shardeum/main/ports_checker.sh && chmod +x ports_checker.sh && ./ports_checker.sh
+source ports_checker.sh
 DASHPORT=$USEPORT
 
 echo -e "${fmt}\nNode port/Порт ноды - $DASHPORT${end}" && sleep 1
